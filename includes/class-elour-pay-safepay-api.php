@@ -26,7 +26,7 @@ class Elour_Pay_Safepay_API {
             return [ 'success' => false, 'message' => $response->get_error_message() ];
         }
 
-        $tracker = $response['data']['tracker']['token'] ?? null;
+        $tracker = $response['data']['token'] ?? null;
         if ( ! $tracker ) {
             return [ 'success' => false, 'message' => 'Could not create payment session. Please try again.' ];
         }
@@ -35,7 +35,7 @@ class Elour_Pay_Safepay_API {
     }
 
     public function initiate_otp_debit( string $tracker, string $bank_code, string $account_number ): array {
-        $response = $this->post( '/v1/payments/debit/otp/initiate/', [
+        $response = $this->post( '/order/v1/debit/otp/init', [
             'tracker'        => $tracker,
             'bank_code'      => $bank_code,
             'account_number' => $account_number,
@@ -55,7 +55,7 @@ class Elour_Pay_Safepay_API {
     }
 
     public function verify_otp_and_debit( string $tracker, string $otp ): array {
-        $response = $this->post( '/v1/payments/debit/otp/verify/', [
+        $response = $this->post( '/order/v1/debit/otp/verify', [
             'tracker' => $tracker,
             'otp'     => $otp,
         ] );
@@ -107,9 +107,8 @@ class Elour_Pay_Safepay_API {
             'method'  => 'POST',
             'timeout' => 30,
             'headers' => [
-                'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . $this->secret_key,
-                'Accept'        => 'application/json',
+                'Content-Type' => 'application/json',
+                'Accept'       => 'application/json',
             ],
             'body' => wp_json_encode( $body ),
         ] );
