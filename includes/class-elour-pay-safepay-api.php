@@ -14,13 +14,12 @@ class Elour_Pay_Safepay_API {
     }
 
     public function create_payment_session( float $amount, string $currency, string $order_id ): array {
-        $response = $this->post( '/v1/payments/session/', [
-            'merchant_api_key' => $this->public_key,
-            'intent'           => 'CYBERSOURCE',
-            'mode'             => 'payment',
-            'currency'         => $currency,
-            'amount'           => (int) round( $amount * 100 ),
-            'order_id'         => (string) $order_id,
+        $response = $this->post( '/order/v1/init', [
+            'client'      => $this->secret_key,
+            'amount'      => (float) round( $amount, 2 ),
+            'currency'    => $currency ?: 'PKR',
+            'environment' => strpos( $this->api_base, 'sandbox' ) !== false ? 'sandbox' : 'production',
+            'order_id'    => (string) $order_id,
         ] );
 
         if ( is_wp_error( $response ) ) {
